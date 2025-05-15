@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:last_mile_delivery/features/auth/view/admin_login_view.dart';
 import 'package:last_mile_delivery/features/auth/view/agent_login_view.dart';
 
@@ -45,6 +46,7 @@ class _LoginViewState extends State<LoginView> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
+                        FocusScope.of(context).unfocus();
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => const AdminLoginView(),
@@ -71,6 +73,7 @@ class _LoginViewState extends State<LoginView> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
+                        FocusScope.of(context).unfocus();
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => const AgentLoginView(),

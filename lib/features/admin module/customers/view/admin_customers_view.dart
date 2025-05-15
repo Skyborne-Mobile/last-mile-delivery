@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:last_mile_delivery/core/widgets/admin_bottom_navigation_bar.dart';
 
 class AdminCustomersView extends StatelessWidget {
   final int selectedIndex;
@@ -163,10 +162,6 @@ class AdminCustomersView extends StatelessWidget {
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: AdminBottomNavigationBar(
-        selectedIndex: selectedIndex,
-        onItemTapped: onItemTapped,
       ),
     );
   }

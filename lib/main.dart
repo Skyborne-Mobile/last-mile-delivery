@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
+
+// Firebase Options
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+// Common between both modules
 import 'package:last_mile_delivery/core/themes/app_theme.dart';
 
-// Admin Module Imports
-import 'package:last_mile_delivery/features/admin%20module/Settings/view/admin_settings_view.dart';
+import 'package:last_mile_delivery/features/admin%20module/admin_module_view.dart';
 
-import 'package:last_mile_delivery/features/admin%20module/dashboard/view/dashboard_view.dart';
+import 'package:last_mile_delivery/features/agents%20module/agent_module_view.dart';
+
 import 'package:last_mile_delivery/features/auth/view/login_view.dart';
 
-import 'features/admin module/agents/view/delivery_agents_view.dart';
+import 'package:last_mile_delivery/firebase_options.dart';
 
-import 'features/admin module/customers/view/admin_customers_view.dart';
-
-// Agents Module Imports
-import 'package:last_mile_delivery/features/agents%20module/customers/view/agent_customers_view.dart';
-
-import 'package:last_mile_delivery/features/agents%20module/home/view/home_view.dart';
-
-import 'package:last_mile_delivery/features/agents%20module/settings/view/agents_settings_view.dart';
-
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     const MyApp(),
   );
@@ -34,64 +39,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  // agent screen bottomnavigation bar
-  Widget _setAgentScreen() {
-    switch (_selectedIndex) {
-      case 0:
-        return HomeView(
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
-        );
-      case 1:
-        return AgentCustomersView(
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
-        );
-      case 2:
-        return AgentsSettingsView(
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
-        );
-      default:
-        return HomeView(
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
-        );
+  Future<Map<String, dynamic>?> fetchUserRole(String uid) async {
+    final adminDoc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (adminDoc.exists) {
+      return {'role': 'admin', 'data': adminDoc.data()};
     }
-  }
 
-  // admin screen bottomnavigation bar
-  Widget _setAdminScreen() {
-    switch (_selectedIndex) {
-      case 0:
-        return DashboardView(
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
-        );
-      case 1:
-        return DeliveryAgentsView(
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
-        );
-      case 2:
-        return AdminCustomersView(
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
-        );
-      default:
-        return AdminSettingsView(
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
-        );
+    final agentDoc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (agentDoc.exists) {
+      return {'role': 'agent', 'data': agentDoc.data()};
     }
+
+    return null; // user not found in either collection
   }
 
   @override
@@ -106,9 +67,53 @@ class _MyAppState extends State<MyApp> {
           darkTheme: AppTheme.dark,
           theme: AppTheme.light,
           themeMode: ThemeMode.system,
-          // home: _setAgentScreen(),
-          home: _setAdminScreen(),
-          // home: LoginView(),
+          home: StreamBuilder(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, authSnapshot) {
+                if (authSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                // if user is logged in
+                if (authSnapshot.hasData && authSnapshot.data != null) {
+                  final uid = authSnapshot.data!.uid;
+
+                  // Fetch user role from Firestore
+                  return FutureBuilder<DocumentSnapshot>(
+                    future: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(uid)
+                        .get(),
+                    builder: (context, userSnapshot) {
+                      if (userSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (userSnapshot.hasData && userSnapshot.data!.exists) {
+                        final userData =
+                            userSnapshot.data!.data() as Map<String, dynamic>;
+
+                        final role = userData['role'] as String?;
+
+                        if (role == 'admin') {
+                          return const AdminModuleView();
+                        } else if (role == 'agent') {
+                          return const AgentModuleView();
+                        } else {
+                          return const LoginView();
+                        }
+                      } else {
+                        return const Center(
+                          child: Text('User data not found'),
+                        );
+                      }
+                    },
+                  );
+                } else {
+                  return const LoginView();
+                }
+              }),
         );
       },
     );

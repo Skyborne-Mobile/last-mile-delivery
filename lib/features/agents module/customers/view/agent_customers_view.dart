@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:last_mile_delivery/core/widgets/agent_bottom_navigation_bar.dart';
-
 class AgentCustomersView extends StatefulWidget {
   final int selectedIndex;
   final ValueChanged<int> onItemTapped;
@@ -111,10 +109,6 @@ class _AgentCustomersViewState extends State<AgentCustomersView> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: AgentCustomNavigationBar(
-        selectedIndex: widget.selectedIndex,
-        onItemTapped: widget.onItemTapped,
       ),
     );
   }

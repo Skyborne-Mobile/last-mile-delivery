@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:last_mile_delivery/core/widgets/agent_bottom_navigation_bar.dart';
-
 class HomeView extends StatelessWidget {
   final int selectedIndex;
   final void Function(int) onItemTapped;
@@ -243,10 +241,6 @@ class HomeView extends StatelessWidget {
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: AgentCustomNavigationBar(
-        selectedIndex: selectedIndex,
-        onItemTapped: onItemTapped,
       ),
     );
   }

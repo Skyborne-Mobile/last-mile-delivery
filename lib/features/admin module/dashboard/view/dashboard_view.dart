@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:last_mile_delivery/core/widgets/admin_bottom_navigation_bar.dart';
-
-class DashboardView extends StatelessWidget {
+class DashboardView extends StatefulWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
@@ -13,6 +11,11 @@ class DashboardView extends StatelessWidget {
     required this.onItemTapped,
   });
 
+  @override
+  State<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,10 +147,6 @@ class DashboardView extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: AdminBottomNavigationBar(
-        selectedIndex: selectedIndex,
-        onItemTapped: onItemTapped,
       ),
     );
   }

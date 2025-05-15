@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:last_mile_delivery/features/auth/view/login_view.dart';
 
-import 'package:last_mile_delivery/core/widgets/admin_bottom_navigation_bar.dart';
-
-class AdminSettingsView extends StatelessWidget {
+class AdminSettingsView extends StatefulWidget {
   final int selectedIndex;
   final void Function(int) onItemTapped;
 
   const AdminSettingsView(
       {super.key, required this.selectedIndex, required this.onItemTapped});
+
+  @override
+  State<AdminSettingsView> createState() => _AdminSettingsViewState();
+}
+
+class _AdminSettingsViewState extends State<AdminSettingsView> {
+  void logoutAdmin() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.popUntil(context, (route) => route.isFirst);
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginView(),
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +244,7 @@ class AdminSettingsView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // TODO: Logout
+                  logoutAdmin();
                 },
                 label: Text(
                   'Sign Out',
@@ -247,10 +262,6 @@ class AdminSettingsView extends StatelessWidget {
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: AdminBottomNavigationBar(
-        selectedIndex: selectedIndex,
-        onItemTapped: onItemTapped,
       ),
     );
   }

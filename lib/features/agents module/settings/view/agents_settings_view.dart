@@ -1,14 +1,32 @@
 import 'package:flutter/material.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:last_mile_delivery/core/widgets/agent_bottom_navigation_bar.dart';
+import 'package:last_mile_delivery/features/auth/view/login_view.dart';
 
-class AgentsSettingsView extends StatelessWidget {
+class AgentsSettingsView extends StatefulWidget {
   final int selectedIndex;
   final void Function(int) onItemTapped;
 
   const AgentsSettingsView(
       {super.key, required this.selectedIndex, required this.onItemTapped});
+
+  @override
+  State<AgentsSettingsView> createState() => _AgentsSettingsViewState();
+}
+
+class _AgentsSettingsViewState extends State<AgentsSettingsView> {
+  void logoutAgent() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.popUntil(context, (route) => route.isFirst);
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginView(),
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +243,7 @@ class AgentsSettingsView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // TODO: Logout
+                  logoutAgent();
                 },
                 label: Text(
                   'Sign Out',
@@ -243,10 +261,6 @@ class AgentsSettingsView extends StatelessWidget {
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: AgentCustomNavigationBar(
-        selectedIndex: selectedIndex,
-        onItemTapped: onItemTapped,
       ),
     );
   }
