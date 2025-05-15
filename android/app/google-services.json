@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "187650946445",
+    "project_id": "last-mile-delivery-7951f",
+    "storage_bucket": "last-mile-delivery-7951f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187650946445:android:7c1a62f495bcb7e82df9c4",
+        "android_client_info": {
+          "package_name": "com.example.last_mile_delivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDk06B-SXBYnIKcfP57xuEY-Oy2Bt8iTyw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
